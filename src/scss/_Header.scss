@@ -1,0 +1,22 @@
+.headerStack {
+    justify-content: space-between;
+    align-items: start !important;
+
+    .icon-btn {
+        display: block;
+        padding: 8px;
+        background-color: rgba($color: #fff, $alpha: 0);
+
+        &.logo {
+            margin-top: 8px;
+        }
+        
+        .record,.setting{
+            width: 24px;
+        }
+        
+        .logo {
+            width: 80px;
+        }
+    }
+}

@@ -1,0 +1,52 @@
+@import 'color';
+
+.chatPage {
+  padding: 0 8px;
+
+  .chatContainerStack {
+    position: relative;
+    width: 100%;
+    height: 226px;
+    padding: 8px;
+    background-color: $--bs-body-bg;
+    border-radius: 8px;
+    overflow: scroll;
+    transition: .3s;
+  }
+  
+  .chatStack {
+    display: flex;
+    align-items: start;
+
+    &.user {
+      flex-direction: row-reverse;
+    }
+  }
+  
+  .chat-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  .chat-name {
+    font-size: 12px;
+    line-height: 24px;
+
+    &.user {
+      text-align: end;
+    }
+  }
+  
+  .chat-content {
+    font-size: 12px;
+    line-height: 20px;
+    padding-right: 32px;
+    word-break: break-all;
+
+    &.user {
+      padding-right: 0;
+      padding-left: 32px;
+    }
+  }
+}

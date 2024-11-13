@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95.8 95.8">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-miterlimit: 10;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <g id="_レイヤー_1-2" data-name="レイヤー 1">
+    <g>
+      <g>
+        <g>
+          <polyline class="cls-1" points="51.63 94.8 51.63 52.95 74.17 83.53"/>
+          <polyline class="cls-1" points="44.17 1 44.17 42.85 21.63 12.27"/>
+        </g>
+        <g>
+          <polyline class="cls-1" points="94.8 44.17 52.95 44.17 83.53 21.63"/>
+          <polyline class="cls-1" points="1 51.63 42.85 51.63 12.27 74.17"/>
+        </g>
+      </g>
+      <g>
+        <g>
+          <circle class="cls-1" cx="18.39" cy="35.28" r="10.84"/>
+          <circle class="cls-1" cx="60.52" cy="18.39" r="10.84"/>
+        </g>
+        <g>
+          <circle class="cls-1" cx="35.28" cy="77.41" r="10.84"/>
+          <circle class="cls-1" cx="77.41" cy="60.52" r="10.84"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+@import 'color';
+
+#root {
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    position: relative;
+    color: $--bs-body-color;
+    background-color: $base-color;
+
+    * {
+        box-sizing: border-box;
+    }
+}

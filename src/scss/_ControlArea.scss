@@ -1,0 +1,55 @@
+@import 'color';
+
+.controlArea {
+  height: 72px;
+  position: relative;
+  padding: 0 16px;
+  
+  .ControlStack {
+    height: inherit;
+    justify-content: space-between;
+    padding: 0 8px;
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background-color: $clear;
+
+    .sound {
+      width: 64px;
+      height: 48px;
+      transform: translateY(16px);
+    }
+    
+    .keyboard {
+      width: 28px;
+      height: 28px;
+    }
+  }
+  
+  .soundbtn-area {
+    width: 96px;
+    height: 96px;
+    
+    .icon-btn {
+      position: absolute;
+      width: 96px;
+      height: 96px;
+      border: 4px solid $--bs-body-bg;
+      border-radius: 50%;
+      background: rgb(190,209,227);
+      background: linear-gradient(90deg, rgba(190,209,227,1) 0%, rgba(7,120,192,1) 100%);
+
+      span {
+        display: block;
+        width: 82px;
+        height: 82px;
+        border-radius: 50%;
+        transform: translateX(4px);
+        background-color: $--bs-body-bg;
+      }
+    }
+  }
+}

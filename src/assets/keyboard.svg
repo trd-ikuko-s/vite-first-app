@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33.85 33.97">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <g id="_レイヤー_1-2" data-name="レイヤー 1">
+    <g>
+      <path class="cls-1" d="M6.87,2v4.88H2V2h4.87M8.87,0H0v8.88h8.87V0h0Z"/>
+      <path class="cls-1" d="M19.36,2v4.88h-4.87V2h4.87M21.36,0h-8.87v8.88h8.87V0h0Z"/>
+      <path class="cls-1" d="M31.85,2v4.88h-4.87V2h4.87M33.85,0h-8.87v8.88h8.87V0h0Z"/>
+      <g>
+        <path class="cls-1" d="M6.87,14.55v4.87H2v-4.87h4.87M8.87,12.55H0v8.87h8.87v-8.87h0Z"/>
+        <path class="cls-1" d="M19.36,14.55v4.87h-4.87v-4.87h4.87M21.36,12.55h-8.87v8.87h8.87v-8.87h0Z"/>
+        <path class="cls-1" d="M31.85,14.55v4.87h-4.87v-4.87h4.87M33.85,12.55h-8.87v8.87h8.87v-8.87h0Z"/>
+      </g>
+      <g>
+        <path class="cls-1" d="M6.87,27.09v4.87H2v-4.87h4.87M8.87,25.09H0v8.87h8.87v-8.87h0Z"/>
+        <path class="cls-1" d="M19.36,27.09v4.87h-4.87v-4.87h4.87M21.36,25.09h-8.87v8.87h8.87v-8.87h0Z"/>
+        <path class="cls-1" d="M31.85,27.09v4.87h-4.87v-4.87h4.87M33.85,25.09h-8.87v8.87h8.87v-8.87h0Z"/>
+      </g>
+    </g>
+  </g>
+</svg>
