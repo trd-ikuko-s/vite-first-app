@@ -11,7 +11,6 @@ import Stack from 'react-bootstrap/Stack';
 import camera from '../assets/camera.svg';
 import sound from '../assets/sound.svg';
 import keyboard from '../assets/keyboard.svg';
-import {sessionSetting} from '../lib/openai';
 
 function ControlArea() {
   
@@ -19,7 +18,7 @@ function ControlArea() {
   //レンダリング内容
   return (
     <>
-    
+
     <div className='controlArea'>
       <div>
         

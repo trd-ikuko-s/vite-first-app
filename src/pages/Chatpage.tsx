@@ -10,7 +10,6 @@ import {instructions} from '../utils/conversation_config';
 import camera from '../assets/camera.svg';
 import sound from '../assets/sound.svg';
 import keyboard from '../assets/keyboard.svg';
-import {sessionSetting} from '../lib/openai';
 import Stack from 'react-bootstrap/Stack';
 import userIcon from '../assets/user-icon.png';
 import assistantIcon from '../assets/assistant-icon.png';
@@ -39,8 +38,8 @@ function Chatpage() {
   const [canPushToTalk, setCanPushToTalk] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
 
-  //ボタンクリック時のアクション一覧
-  //セッション開始
+  // //ボタンクリック時のアクション一覧
+  // //セッション開始
   const connectConversation = useCallback(async () => {
     const client = clientRef.current;
     const wavRecorder = wavRecorderRef.current;
@@ -78,7 +77,7 @@ function Chatpage() {
     setIsConnected(true);
   }, []);
 
-  // セッション切断
+  // // セッション切断
   const disconnectConversation = useCallback(async () => {
     setIsConnected(false);
 
@@ -106,7 +105,7 @@ function Chatpage() {
     await wavRecorder.record((data) => client.appendInputAudio(data.mono));
   };
 
-  // push-to-talk modeでの録音停止
+  // // push-to-talk modeでの録音停止
   const stopRecording = async () => {
     setIsRecording(false);
     const client = clientRef.current;
@@ -115,10 +114,10 @@ function Chatpage() {
     client.createResponse();
   };
 
-  // 会話ログのオートスクロール
+  // // 会話ログのオートスクロール
   useEffect(() => {
     const conversationEls = [].slice.call(
-      document.body.querySelectorAll('chatStack]')
+      document.body.querySelectorAll('chatStack')
     );
     for (const el of conversationEls) {
       const conversationEl = el as HTMLDivElement;
@@ -126,7 +125,7 @@ function Chatpage() {
     }
   }, [items]);
 
-  // Realtimeセットアップ
+  // // Realtimeセットアップ
   useEffect(() => {
     // Get refs
     const wavStreamPlayer = wavStreamPlayerRef.current;
