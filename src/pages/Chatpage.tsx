@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState, ReactEventHandler, MouseEventHandler, ReactNode } from 'react';
 
 import { RealtimeClient } from '@openai/realtime-api-beta';
 import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
@@ -39,6 +39,7 @@ function Chatpage() {
   const [isRecording, setIsRecording] = useState(false);
 
   // //ボタンクリック時のアクション一覧
+
   // //セッション開始
   const connectConversation = useCallback(async () => {
     const client = clientRef.current;
@@ -70,9 +71,9 @@ function Chatpage() {
     // ]);
 
     // 音声検知モードにした場合
-    // if (client.getTurnDetectionType() === 'server_vad') {
-    //   await wavRecorder.record((data) => client.appendInputAudio(data.mono));
-    // }
+    if (client.getTurnDetectionType() === 'server_vad') {
+      await wavRecorder.record((data) => client.appendInputAudio(data.mono));
+    }
     setIsPreparing(false);
     setIsConnected(true);
   }, []);
@@ -114,10 +115,42 @@ function Chatpage() {
     client.createResponse();
   };
 
+  //録音ボタンを押し続けている時
+  const handleMouseDown = (event :React.MouseEvent<HTMLButtonElement>) => {
+    startRecording();
+    //クラス追加
+    if (isConnected) {
+      event.currentTarget.classList.add('is-recording');
+    }
+  };
+
+  //録音ボタンを離した時
+  const handleMouseUp = (event :React.MouseEvent<HTMLButtonElement>) => {
+    stopRecording();
+    //クラス追加
+    event.currentTarget.classList.remove('is-recording');
+  };
+
+  // Push to Talk と VAD の切り替え
+  const changeTurnEndType = async (value: string) => {
+    const client = clientRef.current;
+    const wavRecorder = wavRecorderRef.current;
+    if (value === 'none' && wavRecorder.getStatus() === 'recording') {
+      await wavRecorder.pause();
+    }
+    client.updateSession({
+      turn_detection: value === 'none' ? null : { type: 'server_vad' },
+    });
+    if (value === 'server_vad' && client.isConnected()) {
+      await wavRecorder.record((data) => client.appendInputAudio(data.mono));
+    }
+    setCanPushToTalk(value === 'none');
+  };
+
   // // 会話ログのオートスクロール
   useEffect(() => {
     const conversationEls = [].slice.call(
-      document.body.querySelectorAll('chatStack')
+      document.body.querySelectorAll('[data-conversation-content]')
     );
     for (const el of conversationEls) {
       const conversationEl = el as HTMLDivElement;
@@ -125,7 +158,7 @@ function Chatpage() {
     }
   }, [items]);
 
-  // // Realtimeセットアップ
+  // // Realtimeセットアップ ※初回のみ
   useEffect(() => {
     // Get refs
     const wavStreamPlayer = wavStreamPlayerRef.current;
@@ -136,12 +169,12 @@ function Chatpage() {
     // Set transcription, otherwise we don't get user transcriptions back
     client.updateSession({ input_audio_transcription: { model: 'whisper-1' } });
     // Set Voice
-    client.updateSession({ voice: "echo"});
+    client.updateSession({ voice: "alloy"});
 
     // 連続音声検知モード
-    client.updateSession({
-      turn_detection: { type: 'server_vad' },
-    });
+    // client.updateSession({
+    //   turn_detection: { type: 'server_vad' },
+    // });
 
     client.on('error', (event: any) => console.error(event));
     client.on('conversation.interrupted', async () => {
@@ -168,6 +201,7 @@ function Chatpage() {
     });
 
     setItems(client.conversation.getItems());
+    connectConversation();
 
     return () => {
       // cleanup; resets to defaults
@@ -175,42 +209,53 @@ function Chatpage() {
     };
   }, []);
 
+  // 会話履歴の表示内容を変数に保存
+  const conversationHistory: ReactNode = 
+  items.map((conversationItem) => {
+    return (
+      <Stack className={`chatStack ${conversationItem.role || ''}`} key={conversationItem.id} direction='horizontal' gap={1}>
+        {conversationItem.role === "user" ? 
+        <img className={`chat-icon ${conversationItem.role || ''}`} src= {userIcon} />
+        : conversationItem.role === "assistant" ?
+          <img className={`chat-icon ${conversationItem.role || ''}`} src= {assistantIcon} />
+        : <></>
+        }
+        <Stack className='chatContentStack'>
+          <div className={`chat-name ${conversationItem.role || ''}`}>{conversationItem.role === "user" ? "質問" : conversationItem.role === "assistant" ? "回答" : ""}</div>
+          <div className={`chat-content ${conversationItem.role || ''}`}>
+          {conversationItem.role === 'user' && (
+            <>
+            {conversationItem.formatted.transcript ||
+              (conversationItem.formatted.audio?.length
+                ? '(音声を認識中...)'
+                : conversationItem.formatted.text ||
+                '(メッセージを送信)')}
+            </>
+          )}
+          {conversationItem.role === 'assistant' && (
+            <>
+            {conversationItem.formatted.transcript ||
+              conversationItem.formatted.text ||
+              '応答が中断されました'}
+            </>
+          )}
+          </div>
+        </Stack>
+      </Stack>
+    );
+  })
+
+  // ページのレンダリング
+  
   return (
     <>
     <div className='chatPage'>
-      <Stack className='chatContainerStack' gap={4}>
-        {/* ユーザーの会話 */}
-        <Stack className='chatStack user' direction='horizontal' gap={1}>
-          <img className='chat-icon user' src={userIcon}/>
-          <Stack className='chatContentStack'>
-          <div className='chat-name user'>質問</div>
-          <div className='chat-content user'>質問内容です。長い文章が改行されずに続くとこのような表示になります。</div>
-          </Stack>
-        </Stack>
-        {/* AIの返答 */}
-        <Stack className='chatStack' direction='horizontal' gap={1}>
-          <img className='chat-icon' src={assistantIcon}/>
-          <Stack className='chatContentStack'>
-          <div className='chat-name'>回答</div>
-          <div className='chat-content'>回答の内容です。長い文章が改行されずに続くとこのような表示になります。</div>
-          </Stack>
-        </Stack>
-        {/* ユーザーの会話 */}
-        <Stack className='chatStack user' direction='horizontal' gap={1}>
-          <img className='chat-icon user' src={userIcon}/>
-          <Stack className='chatContentStack'>
-          <div className='chat-name user'>質問</div>
-          <div className='chat-content user'>質問内容です。長い文章が改行されずに続くとこのような表示になります。</div>
-          </Stack>
-        </Stack>
-        {/* AIの返答 */}
-        <Stack className='chatStack' direction='horizontal' gap={1}>
-          <img className='chat-icon' src={assistantIcon}/>
-          <Stack className='chatContentStack'>
-          <div className='chat-name'>回答</div>
-          <div className='chat-content'>回答の内容です。長い文章が改行されずに続くとこのような表示になります。</div>
-          </Stack>
-        </Stack>
+      <div className='chat-status-msg'>
+        {items.length ?  ``: isPreparing ? `接続準備中...` : isConnected ? `質問してください` : `接続されていません`}
+      </div>
+      <Stack className='chatContainerStack' data-conversation-content gap={4}>
+        {/* 会話やりとり表示エリア */}
+        {conversationHistory}
       </Stack>
     </div>
     {/* コントロールボタンエリア */}
@@ -221,15 +266,19 @@ function Chatpage() {
             <img src={camera} className="camera"></img>
           </span>
         </button>
-        {/* サウンドボタンは位置がずれる */}
         <div className='soundbtn-area'>
-          <button className='icon-btn sound'>
+          <button className='icon-btn sound'
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+          >
             <span>
               <img src={sound} className="sound"></img>
             </span>
           </button>
         </div>
-        <button className='icon-btn keyboard'>
+        <button className='icon-btn keyboard'
+        onClick={disconnectConversation}
+        >
           <span>
             <img src={keyboard} className="keyboard"></img>
           </span>

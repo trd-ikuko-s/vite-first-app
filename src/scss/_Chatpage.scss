@@ -1,7 +1,18 @@
 @import 'color';
 
 .chatPage {
+  position: relative;
   padding: 0 8px;
+
+  .chat-status-msg {
+    width: 340px;
+    position: absolute;
+    text-align: center;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
   .chatContainerStack {
     position: relative;
@@ -32,6 +43,7 @@
   .chat-name {
     font-size: 12px;
     line-height: 24px;
+    text-align: start;
 
     &.user {
       text-align: end;
@@ -39,14 +51,18 @@
   }
   
   .chat-content {
+    // width: 315px;
     font-size: 12px;
     line-height: 20px;
     padding-right: 32px;
     word-break: break-all;
+    text-align: start;
+
 
     &.user {
       padding-right: 0;
       padding-left: 32px;
+
     }
   }
 }
