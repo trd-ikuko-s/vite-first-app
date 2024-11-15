@@ -9,23 +9,27 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Full App Name',
-        short_name: 'Short App Name',
-        description: 'A simple PWA app with React and Bootstrap',
-        theme_color: '#ffffff',
+        name: 'Gen AI Chat PWA',
+        short_name: 'Gen AI PWA',
+        description: 'RealtimeAPIを通じてインタラクティブなやり取りができるチャットアプリです。',
+        theme_color: '#4D4E4E',
         icons: [
           {
+            purpose : "maskable",
             src: 'icon-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
+            purpose : "any",
             src: 'icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },
+          
         ],
       },
     }),
   ],
+  base: './',
 });

@@ -1,7 +1,6 @@
 import './App.scss';
 import Header from './pages/Header';
 import Chatpage from './pages/Chatpage';
-import ControlArea from './pages/ControlArea';
 
 function App() {
 
@@ -10,7 +9,6 @@ function App() {
       <Header/>
       <div className='main-area'>
       <Chatpage/>
-      {/* <ControlArea/> */}
       </div>
     </>
   )

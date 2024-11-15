@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState, ReactEventHandler, MouseEventHandler, ReactNode } from 'react';
+import { useEffect, useRef, useCallback, useState, ReactNode } from 'react';
 
 import { RealtimeClient } from '@openai/realtime-api-beta';
 import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
@@ -169,7 +169,7 @@ function Chatpage() {
     // Set transcription, otherwise we don't get user transcriptions back
     client.updateSession({ input_audio_transcription: { model: 'whisper-1' } });
     // Set Voice
-    client.updateSession({ voice: "alloy"});
+    client.updateSession({ voice: "ballad"});
 
     // 連続音声検知モード
     // client.updateSession({
