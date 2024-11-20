@@ -115,21 +115,30 @@ function Chatpage() {
     client.createResponse();
   };
 
+    // イベントの共通部分を持つカスタム型を定義
+  type ButtonEvent = React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>;
+
   //録音ボタンを押し続けている時
-  const handleMouseDown = (event :React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseDown = (e: ButtonEvent) => {
+    e.preventDefault();
+    // 共通の処理をここに書く
     startRecording();
     //クラス追加
     if (isConnected) {
-      event.currentTarget.classList.add('is-recording');
+      e.currentTarget.classList.add('is-recording');
     }
   };
 
   //録音ボタンを離した時
-  const handleMouseUp = (event :React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseUp = (e: ButtonEvent) => {
+    e.preventDefault();
+    // 共通の処理をここに書く
     stopRecording();
-    //クラス追加
-    event.currentTarget.classList.remove('is-recording');
+      //クラス追加
+    e.currentTarget.classList.remove('is-recording');
   };
+
+  
 
   // Push to Talk と VAD の切り替え
   const changeTurnEndType = async (value: string) => {
@@ -270,6 +279,15 @@ function Chatpage() {
           <button className='icon-btn sound'
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              handleMouseDown(e);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              handleMouseUp(e);
+            }}
+            onContextMenu={(e) => e.preventDefault()} // 右クリックメニューの無効化
           >
             <span>
               <img src={sound} className="sound"></img>
