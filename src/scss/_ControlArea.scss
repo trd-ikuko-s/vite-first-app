@@ -99,3 +99,8 @@
     opacity: 0;
   }
 }
+
+//文字入力エリア
+.text-message-area {
+  grid-template-rows: auto 32px;
+}

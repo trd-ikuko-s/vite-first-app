@@ -33,6 +33,7 @@ function Chatpage() {
 
   // 必要な変数一覧
   const [items, setItems] = useState<ItemType[]>([]);
+  const [newMessage, setNewMessage] = useState('');
   const [isPreparing, setIsPreparing] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [canPushToTalk, setCanPushToTalk] = useState(true);
@@ -138,6 +139,20 @@ function Chatpage() {
     e.currentTarget.classList.remove('is-recording');
   };
 
+  //Text送信
+  const sendTextMessage = () => {
+    const client = clientRef.current;
+    console.log(`「${newMessage}」を送信します`);
+    (!isConnected)
+    ? null
+    : (!newMessage)
+    ? null
+    : client.sendUserMessageContent([{
+      type: `input_text`,
+      text: newMessage,
+    },]);
+    setNewMessage('');
+  }
   
 
   // Push to Talk と VAD の切り替え
@@ -302,6 +317,18 @@ function Chatpage() {
           </span>
         </button>
       </Stack>
+      <div className='text-message-area'>
+        <textarea
+        className='text-area'
+        value={newMessage}
+        onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setNewMessage(e.target.value)}
+        />
+        <div className='text-control-area'>
+          <button
+            onClick={sendTextMessage}
+          >送信</button>
+        </div>
+      </div>
     </div>
   </>
   )
