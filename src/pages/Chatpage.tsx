@@ -38,6 +38,11 @@ function Chatpage() {
   const [canPushToTalk, setCanPushToTalk] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
 
+  // テキスト送信関連
+  const [isInputAreaVisible, setIsInputAreaVisible] = useState(false);
+  const [userText, setUserText] = useState('');
+
+
   // //ボタンクリック時のアクション一覧
 
   // //セッション開始
@@ -60,15 +65,6 @@ function Chatpage() {
     // Connect to realtime API
     await client.connect();
     console.log('connect to OpenAI');
-
-    // testメッセージなのでコメントアウト
-    // client.sendUserMessageContent([
-    //   {
-    //     type: `input_text`,
-    //     text: `Hello!`,
-    //     // text: `For testing purposes, I want you to list ten car brands. Number each item, e.g. "one (or whatever number you are one): the item name".`
-    //   },
-    // ]);
 
     // 音声検知モードにした場合
     if (client.getTurnDetectionType() === 'server_vad') {
@@ -254,6 +250,57 @@ function Chatpage() {
     );
   })
 
+  // キーボード関連
+//  // インプットエリア出たらスクロール禁止
+//   useEffect(() => {
+//   const preventTouchMove = (e: TouchEvent) => {
+//     e.preventDefault();
+//   };
+
+//   if (isInputAreaVisible) {
+//     document.body.classList.add('no-scroll');
+//     document.addEventListener('touchmove', preventTouchMove, { passive: false });
+//   } else {
+//     document.body.classList.remove('no-scroll');
+//     document.removeEventListener('touchmove', preventTouchMove);
+//   }
+
+//   // クリーンアップ関数
+//   return () => {
+//     document.removeEventListener('touchmove', preventTouchMove);
+//   };
+// }, [isInputAreaVisible]);
+
+  const showInputArea = () => {
+    setIsInputAreaVisible(true);
+  };
+
+  const hideInputArea = () => {
+    setIsInputAreaVisible(false);
+  };
+
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setUserText(e.target.value);
+  };
+
+  const sendMessage = () => {
+    // userTextを使用してAPIに送信
+    clientRef.current.sendUserMessageContent([
+      {
+        type: 'input_text',
+        text: userText,
+      },
+    ]);
+
+    // テキストエリアをクリア
+    setUserText('');
+
+    // テキスト入力・送信エリアを非表示にする
+    hideInputArea();
+  };
+
+
   // ページのレンダリング
   
   return (
@@ -295,13 +342,27 @@ function Chatpage() {
           </button>
         </div>
         <button className='icon-btn keyboard'
-        onClick={disconnectConversation}
+        onClick={showInputArea}
         >
           <span>
             <img src={keyboard} className="keyboard"></img>
           </span>
         </button>
       </Stack>
+    </div>
+
+    {/* テキスト入力・送信エリア */}
+    <div className={`textInputArea ${isInputAreaVisible ? 'visible' : ''}`}>
+      <textarea
+        id="userInput"
+        placeholder="メッセージを入力"
+        value={userText}
+        onChange={handleTextChange}
+      ></textarea>
+      <div className="buttonArea">
+        <button onClick={hideInputArea}>隠す</button>
+        <button onClick={sendMessage}>送信</button>
+      </div>
     </div>
   </>
   )

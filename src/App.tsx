@@ -14,9 +14,7 @@ function App() {
   return (
     <>
       <Header/>
-      <div className='main-area'>
       <Chatpage/>
-      </div>
     </>
   )
 }

@@ -20,3 +20,13 @@
         touch-action: manipulation;
     }
 }
+
+/* 全体のスクロールを無効化 */
+body {
+    width: 100%; /* position:fixed;になった際に幅が変わるのを防ぐ */
+    position: fixed;
+
+    // .no-scroll {
+    //     overflow: hidden;
+    // }
+}
