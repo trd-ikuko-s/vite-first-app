@@ -250,27 +250,6 @@ function Chatpage() {
     );
   })
 
-  // キーボード関連
-//  // インプットエリア出たらスクロール禁止
-//   useEffect(() => {
-//   const preventTouchMove = (e: TouchEvent) => {
-//     e.preventDefault();
-//   };
-
-//   if (isInputAreaVisible) {
-//     document.body.classList.add('no-scroll');
-//     document.addEventListener('touchmove', preventTouchMove, { passive: false });
-//   } else {
-//     document.body.classList.remove('no-scroll');
-//     document.removeEventListener('touchmove', preventTouchMove);
-//   }
-
-//   // クリーンアップ関数
-//   return () => {
-//     document.removeEventListener('touchmove', preventTouchMove);
-//   };
-// }, [isInputAreaVisible]);
-
   const showInputArea = () => {
     setIsInputAreaVisible(true);
   };

@@ -1,0 +1,116 @@
+@import 'color';
+
+.settingPanel {
+  position: fixed;
+  top: 0;
+  right: -100vw; /* 初期状態で画面外 */
+  width: 100vw;
+  height: 100%;
+  background-color: $base-color;
+  transition: right 0.3s ease-in-out; /* スライドインのアニメーション */
+  z-index: 1000;
+
+  &.visible {
+    right: 0; /* 表示状態で画面内 */
+  }
+}
+
+.settingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px;
+  background-color: $base-color;
+  
+  .closeBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding:12px;
+    
+    .go-back {
+      width: 13px;
+      transform: rotate(180deg);
+    }
+  }
+
+  .logo {
+    width: 44px;
+    padding-top: 4px;
+
+  }
+
+  .spacer {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.settingContent {
+  padding: 16px 0 8px;
+  overflow-y: auto; /* コンテンツが多い場合にスクロールを有効化 */
+
+  h2 {
+    color: $--bs-body-color;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 18px;
+    
+    span {
+      position: relative;
+    }
+  }
+
+  .setting-main-icon {
+    position: absolute;
+    width: 36px;
+    top: -8px;
+    left: -44px;
+  }
+
+  .setting-list-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0 8px;
+  }
+
+  .setting-list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    width: 100%;
+    height: 48px;
+    background-color: $--bs-body-bg;
+    color: $--bs-body-color;
+    border-radius: 4px;
+    padding-left: 18px;
+    padding-right: 10px;
+    margin-bottom: 6px;
+    
+    &.default{
+      margin-bottom: 18px;
+    }
+
+    .setting-list-icon {
+      width: 26px;
+    }
+
+    .setting-list-title {
+      margin-left: 24px;
+      margin-right: 16px;
+      width: 270px;
+      margin-bottom: 0;
+      overflow: hidden;
+    }
+
+    .go {
+      width: 13px;
+    }
+  }
+}
