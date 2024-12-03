@@ -298,6 +298,18 @@ function Chatpage({
           </span>
         </button>
       </Stack>
+      <div className='text-message-area'>
+        <textarea
+        className='text-area'
+        value={newMessage}
+        onInput={(e: React.FormEvent<HTMLTextAreaElement>) => setNewMessage(e.target.value)}
+        />
+        <div className='text-control-area'>
+          <button
+            onClick={sendTextMessage}
+          >送信</button>
+        </div>
+      </div>
     </div>
 
     {/* テキスト入力・送信エリア */}
