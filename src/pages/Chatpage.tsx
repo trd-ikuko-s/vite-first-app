@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState, ReactNode } from 'react';
+import { useEffect, useRef, useState, useCallback,ReactNode } from 'react';
 
 import { RealtimeClient } from '@openai/realtime-api-beta';
 import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
@@ -15,28 +15,32 @@ import userIcon from '../assets/user-icon.png';
 import assistantIcon from '../assets/assistant-icon.png';
 
 
-function Chatpage() {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-  const wavRecorderRef = useRef<WavRecorder>(
-    new WavRecorder({ sampleRate: 24000 })
-  );
-  const wavStreamPlayerRef = useRef<WavStreamPlayer>(
-    new WavStreamPlayer({ sampleRate: 24000 })
-  );
-  const clientRef = useRef<RealtimeClient>(
-    new RealtimeClient({
-        apiKey: apiKey,
-        dangerouslyAllowAPIKeyInBrowser: true,
-      }
-    )
-  );
+function Chatpage({
+  clientRef,
+  wavRecorderRef,
+  wavStreamPlayerRef,
+  disconnectConversation,
+  isConnected,
+  setIsConnected,
+  items,
+  setItems,
+  isPreparing,
+  setIsPreparing,
+}: {
+  clientRef: React.RefObject<RealtimeClient>;
+  wavRecorderRef: React.RefObject<WavRecorder>;
+  wavStreamPlayerRef: React.RefObject<WavStreamPlayer>;
+  disconnectConversation: () => Promise<void>;
+  isConnected: boolean;
+  setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
+  items: ItemType[];
+  setItems: React.Dispatch<React.SetStateAction<ItemType[]>>;
+  isPreparing: boolean;
+  setIsPreparing: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  
 
   // 必要な変数一覧
-  const [items, setItems] = useState<ItemType[]>([]);
-  const [isPreparing, setIsPreparing] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  const [canPushToTalk, setCanPushToTalk] = useState(true);
-  const [isRecording, setIsRecording] = useState(false);
 
   // テキスト送信関連
   const [isInputAreaVisible, setIsInputAreaVisible] = useState(false);
@@ -66,31 +70,13 @@ function Chatpage() {
     await client.connect();
     console.log('connect to OpenAI');
 
-    // 音声検知モードにした場合
-    if (client.getTurnDetectionType() === 'server_vad') {
-      await wavRecorder.record((data) => client.appendInputAudio(data.mono));
-    }
-    setIsPreparing(false);
     setIsConnected(true);
-  }, []);
+    setIsPreparing(false);
 
-  // // セッション切断
-  const disconnectConversation = useCallback(async () => {
-    setIsConnected(false);
-
-    const client = clientRef.current;
-    client.disconnect();
-
-    const wavRecorder = wavRecorderRef.current;
-    await wavRecorder.end();
-
-    const wavStreamPlayer = wavStreamPlayerRef.current;
-    await wavStreamPlayer.interrupt();
   }, []);
 
   // push-to-talk modeでの録音開始
   const startRecording = async () => {
-    setIsRecording(true);
     const client = clientRef.current;
     const wavRecorder = wavRecorderRef.current;
     const wavStreamPlayer = wavStreamPlayerRef.current;
@@ -104,7 +90,6 @@ function Chatpage() {
 
   // // push-to-talk modeでの録音停止
   const stopRecording = async () => {
-    setIsRecording(false);
     const client = clientRef.current;
     const wavRecorder = wavRecorderRef.current;
     await wavRecorder.pause();
@@ -120,7 +105,7 @@ function Chatpage() {
     // 共通の処理をここに書く
     startRecording();
     //クラス追加
-    if (isConnected) {
+    if (setIsConnected) {
       e.currentTarget.classList.add('is-recording');
     }
   };
@@ -134,24 +119,6 @@ function Chatpage() {
     e.currentTarget.classList.remove('is-recording');
   };
 
-  
-
-  // Push to Talk と VAD の切り替え
-  const changeTurnEndType = async (value: string) => {
-    const client = clientRef.current;
-    const wavRecorder = wavRecorderRef.current;
-    if (value === 'none' && wavRecorder.getStatus() === 'recording') {
-      await wavRecorder.pause();
-    }
-    client.updateSession({
-      turn_detection: value === 'none' ? null : { type: 'server_vad' },
-    });
-    if (value === 'server_vad' && client.isConnected()) {
-      await wavRecorder.record((data) => client.appendInputAudio(data.mono));
-    }
-    setCanPushToTalk(value === 'none');
-  };
-
   // // 会話ログのオートスクロール
   useEffect(() => {
     const conversationEls = [].slice.call(
@@ -163,7 +130,7 @@ function Chatpage() {
     }
   }, [items]);
 
-  // // Realtimeセットアップ ※初回のみ
+  // RealtimeAPIセットアップ ※初回のみ
   useEffect(() => {
     // Get refs
     const wavStreamPlayer = wavStreamPlayerRef.current;
@@ -175,11 +142,6 @@ function Chatpage() {
     client.updateSession({ input_audio_transcription: { model: 'whisper-1' } });
     // Set Voice
     client.updateSession({ voice: "ballad"});
-
-    // 連続音声検知モード
-    // client.updateSession({
-    //   turn_detection: { type: 'server_vad' },
-    // });
 
     client.on('error', (event: any) => console.error(event));
     client.on('conversation.interrupted', async () => {
@@ -265,6 +227,7 @@ function Chatpage() {
 
   const sendMessage = () => {
     // userTextを使用してAPIに送信
+    console.log('Sending message:', userText);
     clientRef.current.sendUserMessageContent([
       {
         type: 'input_text',
@@ -340,7 +303,7 @@ function Chatpage() {
       ></textarea>
       <div className="buttonArea">
         <button onClick={hideInputArea}>隠す</button>
-        <button onClick={sendMessage}>送信</button>
+        <button onPointerUp={sendMessage}>送信</button>
       </div>
     </div>
   </>

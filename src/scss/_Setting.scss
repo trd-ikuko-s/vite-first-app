@@ -37,7 +37,6 @@
   .logo {
     width: 44px;
     padding-top: 4px;
-
   }
 
   .spacer {
@@ -49,6 +48,7 @@
 }
 
 .settingContent {
+  position: relative;
   padding: 16px 0 8px;
   overflow-y: auto; /* コンテンツが多い場合にスクロールを有効化 */
 
@@ -111,6 +111,229 @@
 
     .go {
       width: 13px;
+    }
+  }
+}
+
+.setting-add-window {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 背景を半透明に */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+
+  .setting-add-content {
+    background-color: $base-color;
+    padding: 12px;
+    width: 90%;
+    max-width: 375px;
+    border-radius: 4px;
+  }
+
+  h2 {
+    font-weight: 400;
+    margin-bottom: 16px;
+    font-size: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+
+    input {
+      width: 100%;
+      padding: 6px;
+      resize: none; /* ユーザーによるリサイズを無効化 */
+      border: 0;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 16px;
+      outline: none;
+      color: $--bs-body-color;
+      margin-top: 4px;
+      background-color: $--bs-body-bg;
+    }
+    
+    select {
+      display: block;
+      width: 50%;
+      padding: 6px;
+      resize: none; /* ユーザーによるリサイズを無効化 */
+      border: 0;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 18px;
+      outline: none;
+      color: $--bs-body-color;
+      margin-top: 4px;
+      background-color: $--bs-body-bg;
+    }
+    
+    textarea {
+      width: 100%;
+      height: 160px;
+      padding: 6px;
+      resize: none; /* ユーザーによるリサイズを無効化 */
+      border: 0;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 16px;
+      outline: none;
+      color: $--bs-body-color;
+      margin-top: 4px;
+      background-color: $--bs-body-bg;
+    }
+  }
+
+  .error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: flex-start;
+    button {
+      margin-left: 10px;
+    }
+  }
+}
+
+.setting-add-btn-container {
+  position: absolute;
+  width: 100%;
+  bottom: 12px;
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    width: 38px;
+    height: 38px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-right: 18px;
+    
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+// 設定編集画面
+.setting-detail-window {
+  position: fixed;
+  top: 0px; /* settingHeaderの高さに合わせる */
+  right: -100%;
+  width: 100%;
+  height: calc(100% - 0px); /* 上端をsettingHeaderに合わせる */
+  background-color: $base-color;
+  transition: right 0.3s ease-in-out;
+  z-index: 1001;
+
+  &.visible {
+    right: 0;
+  }
+
+  .setting-detail-content {
+    padding: 8px;
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+  
+      input {
+        width: 100%;
+        padding: 6px;
+        resize: none; /* ユーザーによるリサイズを無効化 */
+        border: 0;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 16px;
+        outline: none;
+        color: $--bs-body-color;
+        margin-top: 4px;
+        background-color: $--bs-body-bg;
+      }
+      
+      select {
+        display: block;
+        width: 50%;
+        padding: 6px;
+        resize: none; /* ユーザーによるリサイズを無効化 */
+        border: 0;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 18px;
+        outline: none;
+        color: $--bs-body-color;
+        margin-top: 4px;
+        background-color: $--bs-body-bg;
+      }
+      
+      textarea {
+        width: 100%;
+        height: 200px;
+        padding: 6px;
+        resize: none; /* ユーザーによるリサイズを無効化 */
+        border: 0;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 16px;
+        outline: none;
+        color: $--bs-body-color;
+        margin-top: 4px;
+        background-color: $--bs-body-bg;
+      }
+    }
+
+
+  }
+
+  //設定詳細画面のヘッダー
+  .setting-detail-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      width: 44px;
+      padding-top: 4px;
+    }
+
+    h2 {
+      font-weight: 400;
+      font-size: 20px;
+      margin: 16px 0;
+    }
+  }
+
+
+  .button-group {
+    position: absolute;
+    bottom: 24px;
+    left: 0;
+    width: 100%;
+    // height: 32px;
+    display: flex;
+    justify-content: space-around;
+
+    button {
+      width: 112px;
+      padding: 4px 8px;
+      color: $--bs-body-bg;
+      background-color: $--bs-body-color;
     }
   }
 }

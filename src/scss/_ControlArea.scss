@@ -81,7 +81,7 @@
         width: 82px;
         height: 82px;
         border-radius: 50%;
-        transform: translateX(4px);
+        transform: translateX(3px);
         background-color: $--bs-body-bg;
       }
     }
@@ -103,7 +103,7 @@
 // テキスト入力系
 .textInputArea {
   position: absolute;
-  bottom: -40px; /* 初期位置を画面下に隠す */
+  bottom: -30px; /* 初期位置を画面下に隠す */
   left: 0;
   width: 100%;
   background-color: #000;
@@ -113,7 +113,7 @@
   z-index: 100;
   
   &.visible {
-    bottom: 270px; /* 20px上に移動 */
+    bottom: 270px; /* 上に移動 */
     height: 206px;
   }
 
