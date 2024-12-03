@@ -39,6 +39,13 @@ function Chatpage({
   setIsPreparing: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   
+  // マウント回数をチェック
+  useEffect(() => {
+    console.log('ChatPage component mounted');
+    return () => {
+      console.log('ChatPage component unmounted');
+    };
+  }, []);
 
   // 必要な変数一覧
 

@@ -2,10 +2,45 @@ import go from '../assets/go.svg';
 import logo from '../assets/logo.svg';
 import addIcon from '../assets/add.svg';
 import setting from '../assets/setting.svg';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { RealtimeClient } from '@openai/realtime-api-beta';
 
+// ボイスの選択肢
+type VoiceOptions = 'alloy' | 'ash' | 'ballad' | 'coral' | 'echo' | 'sage' | 'shimmer' | 'verse' | undefined;
+// ボイスの選択肢
+const voiceOptions = [
+  'alloy',
+  'echo',
+  'shimmer',
+  'ash',
+  'ballad',
+  'coral',
+  'sage',
+  'verse',
+];
 
+// 設定アイテムの型定義
+type SettingItem = {
+id: number | string;
+character: string;
+instructions: string;
+voice: VoiceOptions;
+};
+// デフォルト設定
+const defaultSetting: SettingItem = {
+  id: 'default', // 特別なIDを設定
+  character: 'デフォルト',
+  voice: 'ballad' as VoiceOptions,
+  instructions: `あなたは日本人でユーモアにあふれたフレンドリーな男性の関西人アシスタントです。
+一人称は「ウチ」で、常に流暢な関西弁で話します。
+私の会社に勤める先輩社員になったつもりで、悩みに寄り添い、共感したりしながら、質問や相談に対するベストな提案を行います。
+もしも、こちらが日本語以外で話しかけた時は、よく聞きとれなかったということを伝えながらもう一度話しかけるように促します。
+Personality:
+早口気味に話します。
+明るくはきはきとした口調で、くだけた態度で話します。`,
+};
+
+// コンポーネントの定義
 function Setting({
   isVisible,
   onClose,
@@ -21,68 +56,18 @@ function Setting({
   startConversation: () => Promise<void>;
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  // ボイスの選択肢
-  type VoiceOptions = 'alloy' | 'ash' | 'ballad' | 'coral' | 'echo' | 'sage' | 'shimmer' | 'verse' | undefined;
-  // ボイスの選択肢
-  const voiceOptions = [
-    'alloy',
-    'echo',
-    'shimmer',
-    'ash',
-    'ballad',
-    'coral',
-    'sage',
-    'verse',
-  ];
 
-  // 設定アイテムの型定義
-type SettingItem = {
-  id: number | string;
-  character: string;
-  instructions: string;
-  voice: VoiceOptions;
-};
-  // デフォルト設定
-  const defaultSetting: SettingItem = {
-    id: 'default', // 特別なIDを設定
-    character: 'デフォルト',
-    voice: 'ballad' as VoiceOptions,
-    instructions: `あなたは日本人でユーモアにあふれたフレンドリーな男性の関西人アシスタントです。
-一人称は「ウチ」で、常に流暢な関西弁で話します。
-私の会社に勤める先輩社員になったつもりで、悩みに寄り添い、共感したりしながら、質問や相談に対するベストな提案を行います。
-もしも、こちらが日本語以外で話しかけた時は、よく聞きとれなかったということを伝えながらもう一度話しかけるように促します。
-Personality:
-早口気味に話します。
-明るくはきはきとした口調で、くだけた態度で話します。`,
-  };
+  // マウント回数をチェック
+  useEffect(() => {
+    console.log('Setting component mounted');
+    return () => {
+      console.log('Setting component unmounted');
+    };
+  }, []);
+  
 
   //すべての設定項目を保持する状態
   const [settingContents, setSettingContents] = useState<SettingItem[]>([defaultSetting]);
-
-  // ローカルストレージから設定を読み込み、defaultSetting を含める
-  useEffect(() => {
-    const storedSettings = localStorage.getItem('setting-contents');
-    if (storedSettings) {
-      const parsedSettings: SettingItem[] = JSON.parse(storedSettings);
-  
-      // `defaultSetting` が存在しない場合は追加
-      const hasDefault = parsedSettings.some((item) => item.id === 'default');
-      if (!hasDefault) {
-        parsedSettings.unshift(defaultSetting); // 最初に追加
-      }
-  
-      setSettingContents(parsedSettings);
-    } else {
-      // ローカルストレージに設定がない場合、`defaultSetting` を使用
-      setSettingContents([defaultSetting]);
-    }
-  }, []);
-
-  //settingContents の変更をローカルストレージに保存
-  useEffect(() => {
-    localStorage.setItem('setting-contents', JSON.stringify(settingContents));
-  }, [settingContents]);
-  
 
   // 選択した設定内容の情報
   const [selectedItem, setSelectedItem] = useState<{
@@ -107,28 +92,50 @@ Personality:
   const [instructionsError, setInstructionsError] = useState('');
 
   // 編集用の入力値を管理する状態
-const [editCharacter, setEditCharacter] = useState('');
-const [editInstructions, setEditInstructions] = useState('');
-const [editVoice, setEditVoice] = useState<VoiceOptions>('alloy');
+  const [editCharacter, setEditCharacter] = useState('');
+  const [editInstructions, setEditInstructions] = useState('');
+  const [editVoice, setEditVoice] = useState<VoiceOptions>('alloy');
 
-// 編集画面のバリデーションエラーメッセージ
-const [editCharacterError, setEditCharacterError] = useState('');
-const [editInstructionsError, setEditInstructionsError] = useState('');
+  // 編集画面のバリデーションエラーメッセージ
+  const [editCharacterError, setEditCharacterError] = useState('');
+  const [editInstructionsError, setEditInstructionsError] = useState('');
+  // isInitialized フラグを定義
+  const isInitialized = useRef(false);
 
-  
-  // ローカルストレージからデータを読み込む
+  // アプリ起動時にローカルストレージからデータを読み込む
   useEffect(() => {
-    const storedSettings = localStorage.getItem('setting-contents');
-    if (storedSettings) {
-      const parsedSettings: Array<{
-        id: number;
-        character: string;
-        instructions: string;
-        voice: VoiceOptions;
-      }> = JSON.parse(storedSettings);
-      setSettingContents(parsedSettings);
+    if (!isInitialized.current) {
+      // 初期化処理をここに記述
+      const storedSettings = localStorage.getItem('setting-contents');
+      if (storedSettings) {
+        try {
+          const parsedSettings: SettingItem[] = JSON.parse(storedSettings);
+
+          // デフォルト設定が存在しない場合のみ追加
+          const hasDefault = parsedSettings.some((item) => item.id === 'default');
+          if (!hasDefault) {
+            parsedSettings.unshift(defaultSetting);
+          }
+
+          setSettingContents(parsedSettings);
+          console.log('Loaded from localStorage:', parsedSettings);
+        } catch (error) {
+          console.error('Failed to parse localStorage data:', error);
+        }
+      } else {
+        // ローカルストレージにデータがない場合、デフォルト設定を使用
+        setSettingContents([defaultSetting]);
+        console.log('No data in localStorage, using default setting');
+      }
+
+      isInitialized.current = true; // 初期化済みフラグを設定
     }
   }, []);
+
+  //settingContents の変更をローカルストレージに保存
+  useEffect(() => {
+    localStorage.setItem('setting-contents', JSON.stringify(settingContents));
+  }, [settingContents]);
 
   // settingContentsが更新されたらローカルストレージに保存
   useEffect(() => {
