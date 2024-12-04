@@ -4,6 +4,7 @@ import addIcon from '../assets/add.svg';
 import setting from '../assets/setting.svg';
 import React, { useState, useEffect, useRef } from 'react';
 import { RealtimeClient } from '@openai/realtime-api-beta';
+import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
 
 // ボイスの選択肢
 type VoiceOptions = 'alloy' | 'ash' | 'ballad' | 'coral' | 'echo' | 'sage' | 'shimmer' | 'verse' | undefined;
@@ -45,16 +46,12 @@ function Setting({
   isVisible,
   onClose,
   clientRef,
-  disconnectConversation,
-  startConversation,
-  setIsConnected,
+  startNewSession,
 }: {
   isVisible: boolean;
   onClose: () => void;
   clientRef: React.RefObject<RealtimeClient>;
-  disconnectConversation: () => Promise<void>;
-  startConversation: () => Promise<void>;
-  setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
+  startNewSession: () => Promise<void>;
 }) {
 
   // マウント回数をチェック
@@ -286,24 +283,23 @@ function Setting({
   // 設定を保存して会話を開始する関数
   const handleSaveAndStartConversation = async () => {
     try {
-      await handleSaveDetail(); // 設定内容を保存
-    
-      await disconnectConversation(); // 会話を切断
-    
+      handleSaveDetail();
+
       if (clientRef.current) {
         const client = clientRef.current;
         client.updateSession({ voice: editVoice });
         client.updateSession({ instructions: editInstructions });
       }
 
-      // 設定ウインドウを閉じる
+      // ウインドウを閉じる
       setIsDetailWindowVisible(false);
       onClose();
-      
-      await startConversation(); // sessionを再開
+
+      // 新しいセッションを開始
+      await startNewSession();
     } catch (error) {
       console.error('エラーが発生しました:', error);
-      // 必要に応じてエラーメッセージを表示
+      // エラー処理
     }
   };
   
@@ -349,6 +345,8 @@ function Setting({
               <label>
                 キャラクター名:
                 <input
+                  id="add-setting-character"
+                  name="add-setting-character"
                   type='text'
                   value={newCharacter}
                   onChange={(e) => setNewCharacter(e.target.value)}
@@ -359,6 +357,8 @@ function Setting({
               <label>
                 ボイス:
                 <select
+                  id="add-setting-voice"
+                  name="add-setting-voice"
                   value={newVoice}
                   onChange={(e) => setNewVoice(e.target.value as VoiceOptions)}
                 >
@@ -370,6 +370,8 @@ function Setting({
               <label>
                 インストラクション:
                 <textarea
+                  id="add-setting-instructions"
+                  name="add-setting-instructions"
                   value={newInstructions}
                   onChange={(e) => setNewInstructions(e.target.value)}
                   maxLength={500}
@@ -393,6 +395,8 @@ function Setting({
               <label>
                 キャラクター名:
                 <input
+                  id="edit-setting-character"
+                  name="edit-setting-character"
                   type='text'
                   value={editCharacter}
                   onChange={(e) => setEditCharacter(e.target.value)}
@@ -404,6 +408,8 @@ function Setting({
               <label>
                 ボイス:
                 <select
+                  id="edit-setting-voice" 
+                  name="edit-setting-voice"
                   value={editVoice}
                   onChange={(e) => setEditVoice(e.target.value as VoiceOptions)}
                 >
@@ -416,6 +422,8 @@ function Setting({
               <label>
                 インストラクション:
                 <textarea
+                  id="edit-setting-instructions"
+                  name="edit-setting-instructions"
                   value={editInstructions}
                   onChange={(e) => setEditInstructions(e.target.value)}
                   maxLength={500}
