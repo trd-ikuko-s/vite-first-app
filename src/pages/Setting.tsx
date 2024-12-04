@@ -255,6 +255,33 @@ function Setting({
     // 編集ウインドウを閉じる
     setIsDetailWindowVisible(false);
   };
+
+  // 設定を削除
+  const handleDelete = () => {
+    if (!selectedItem) {
+      return;
+    }
+  
+    // デフォルト設定の削除を防ぐ場合
+    if (selectedItem.id === 'default') {
+      alert('デフォルト設定は削除できません。');
+      return;
+    }
+  
+    // ユーザーに確認を取る
+    if (!window.confirm('本当にこの設定を削除しますか？')) {
+      return;
+    }
+  
+    // `settingContents` からアイテムを削除
+    setSettingContents((prevContents) =>
+      prevContents.filter((item) => item.id !== selectedItem.id)
+    );
+  
+    // ウインドウを閉じる
+    setIsDetailWindowVisible(false);
+  };
+  
   
   // 設定を保存して会話を開始する関数
   const handleSaveAndStartConversation = async () => {
@@ -400,8 +427,9 @@ function Setting({
               <div className='button-group'>
                 <button onClick={handleSaveDetail}>保存</button>
                 <button onClick={handleCancelDetail}>キャンセル</button>
-                <button onClick={handleSaveAndStartConversation}>設定を保存して会話を開始</button>
+                <button onClick={handleDelete}>削除</button>
               </div>
+              <button className='full-width-button' onClick={handleSaveAndStartConversation}>設定を保存して会話を開始</button>
             </div>
           </div>
       </div>
