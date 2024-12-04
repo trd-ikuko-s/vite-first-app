@@ -5,6 +5,7 @@ import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
 
 function ConversationHistory({
   conversationHistory,
+  conversationTitles,
   onClose,
 }: {
   conversationHistory: {
@@ -13,6 +14,7 @@ function ConversationHistory({
     text: string;
     timestamp: string;
   }[][];
+  conversationTitles: string[];
   onClose: () => void;
 }) {
   return (
@@ -25,14 +27,13 @@ function ConversationHistory({
         conversationHistory.map((conversation, index) =>
           conversation.length > 0 ? (
             <div key={index} className="conversation">
-              <h3>会話 {index + 1}</h3>
+              <h3>{conversationTitles[index] || `会話 ${index + 1}`}</h3>
               <ul>
-              {conversation.map((item, idx) => (
-                <li key={idx}>
-                  <strong>{item.role === 'user' ? 'ユーザー' : 'AI'}</strong>:
-                  {item.text}
-                </li>
-              ))}
+                {conversation.map((item, idx) => (
+                  <li key={idx}>
+                    <strong>{item.role === 'user' ? 'ユーザー' : 'AI'}</strong>: {item.text}
+                  </li>
+                ))}
               </ul>
             </div>
           ) : null
