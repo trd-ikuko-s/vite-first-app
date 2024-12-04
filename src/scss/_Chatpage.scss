@@ -16,11 +16,11 @@
 
   .chatContainerStack {
     position: relative;
-    width: 100%;
+    // width: 100%;
     height: 226px;
     padding: 8px;
     background-color: $--bs-body-bg;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow-y: scroll;
     //iOSでの慣性スクロール
     -webkit-overflow-scrolling: touch;
