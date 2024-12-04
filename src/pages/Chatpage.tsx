@@ -26,6 +26,8 @@ function Chatpage({
   setItems,
   isPreparing,
   setIsPreparing,
+  conversationHistory,
+  setConversationHistory
 }: {
   clientRef: React.RefObject<RealtimeClient>;
   wavRecorderRef: React.RefObject<WavRecorder>;
@@ -37,6 +39,8 @@ function Chatpage({
   setItems: React.Dispatch<React.SetStateAction<ItemType[]>>;
   isPreparing: boolean;
   setIsPreparing: React.Dispatch<React.SetStateAction<boolean>>;
+  conversationHistory: ItemType[][]; 
+  setConversationHistory: React.Dispatch<React.SetStateAction<ItemType[][]>>;
 }) {
   
   // マウント回数をチェック
@@ -184,7 +188,7 @@ function Chatpage({
   }, []);
 
   // 会話履歴の表示内容を変数に保存
-  const conversationHistory: ReactNode = 
+  const currentConversationHistory: ReactNode = 
   items.map((conversationItem) => {
     return (
       <Stack className={`chatStack ${conversationItem.role || ''}`} key={conversationItem.id} direction='horizontal' gap={1}>
@@ -260,7 +264,7 @@ function Chatpage({
       </div>
       <Stack className='chatContainerStack' data-conversation-content gap={4}>
         {/* 会話やりとり表示エリア */}
-        {conversationHistory}
+        {currentConversationHistory}
       </Stack>
     </div>
     {/* コントロールボタンエリア */}
@@ -305,6 +309,7 @@ function Chatpage({
     <div className={`textInputArea ${isInputAreaVisible ? 'visible' : ''}`}>
       <textarea
         id="userInput"
+        name="userInput"
         placeholder="メッセージを入力"
         value={userText}
         onChange={handleTextChange}
