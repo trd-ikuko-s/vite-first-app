@@ -135,5 +135,11 @@
     display: flex;
     justify-content: space-between;
     padding: 4px 10px;
+
+    button {
+      color: $--bs-body-bg;
+      background-color: $--bs-body-color;
+      padding: 8px;
+    }
   }
 }

@@ -25,6 +25,7 @@
 body {
     width: 100%; /* position:fixed;になった際に幅が変わるのを防ぐ */
     position: fixed;
+    line-break: loose !important;
 
     // .no-scroll {
     //     overflow: hidden;

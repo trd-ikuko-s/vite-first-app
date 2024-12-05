@@ -2,16 +2,17 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { RealtimeClient } from '@openai/realtime-api-beta';
-import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
+import { ItemType} from '@openai/realtime-api-beta/dist/lib/client.js';
 import { WavRecorder, WavStreamPlayer } from './lib/wavtools/index.js';
 import './App.scss';
-import ErrorBoundary from './ErrorBoundary';
 import Header from './pages/Header';
 import Setting from './pages/Setting';
 import Chatpage from './pages/Chatpage';
 import ConversationHistory from './pages/ConversationHistory';
+import ConversationDetail from './pages/ConversationDetail';
 
 function App() {
+
   // Setting画面の状態変数
   const [isSettingVisible, setIsSettingVisible] = useState(false);
   // APIとの接続確認
@@ -57,20 +58,24 @@ function App() {
   // タイトルの生成フラグ
   const [isTitleGenerated, setIsTitleGenerated] = useState<boolean[]>([]);
 
+  // 選択された会話のインデックスを保持
+  const [selectedConversationIndex, setSelectedConversationIndex] = useState<number | null>(null);
+
+  // 会話履歴の詳細ウィンドウの表示状態
+  const [isDetailVisible, setIsDetailVisible] = useState(false);
 
   // メイン画面に表示される会話内容
   const [items, setItems] = useState<ItemType[]>([]);
+
   // 会話履歴の表示状態
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const toggleHistory = () => {
+    setIsHistoryVisible((prev) => !prev);
+  };
 
   // セッティング画面の表示
   const toggleSetting = () => {
     setIsSettingVisible((prev) => !prev);
-  };
-
-  // 履歴表示のトグル関数
-  const toggleHistory = () => {
-    setIsHistoryVisible((prev) => !prev);
   };
 
   // APIとの接続関連
@@ -146,7 +151,7 @@ function App() {
   
     // 最初の AI の返答を検出
     const firstAssistantIndex = items.findIndex(
-      (item) => item.role === 'assistant' && item.status === 'completed'
+      (item) => item.role === 'assistant' && 'status' in item && item.status === 'completed'
     );
 
     // タイトルが未生成であり、AI の返答が完了している場合にのみ生成
@@ -185,7 +190,7 @@ function App() {
       const sanitizedItems = items.map((item) => ({
         id: item.id,
         role: item.role || '',
-        text: item.formatted?.transcript || '',
+        text: item.formatted?.transcript || item.formatted?.text ||'',
         timestamp: new Date().toISOString(),
       }));
 
@@ -214,7 +219,7 @@ function App() {
 
       const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
   
-      const prompt = `以下のユーザーとAIの会話内容をもとに、短くてわかりやすい会話のタイトルを考えてください。タイトルのみを出力してください。
+      const prompt = `以下のユーザーとAIの会話内容をもとに、短くてわかりやすい会話のタイトルを考えてください。タイトルに'AI'という単語は含まず、20字以内で。タイトルのみを出力してください。
   
 ユーザーの発言:
 ${userMessage}
@@ -320,12 +325,32 @@ ${assistantMessage}
   }, [disconnectConversation, startConversation]);  
 
   return (
-    <ErrorBoundary>
     <>
       <Header
       onSettingClick={toggleSetting}
       onHistoryClick={toggleHistory}
-      toggleHistory={toggleHistory}
+      />
+      <ConversationHistory
+        className={isHistoryVisible ? 'visible' : ''}
+        conversationTitles={conversationTitles}
+        onClose={() => setIsHistoryVisible(false)}
+        onTitleClick={(index) => {
+          setSelectedConversationIndex(index);
+          setIsDetailVisible(true);
+          setIsHistoryVisible(false); // conversation-history を非表示にする
+        }}
+      />
+      <ConversationDetail
+        className={isDetailVisible ? 'visible' : ''}
+        conversation={
+          selectedConversationIndex !== null
+            ? conversationHistory[selectedConversationIndex]
+            : []
+        }
+        onClose={() => {
+          setIsDetailVisible(false);
+          setIsHistoryVisible(true); // conversation-history を再表示する
+        }}
       />
       <Setting
         isVisible={isSettingVisible}
@@ -337,7 +362,6 @@ ${assistantMessage}
       clientRef={clientRef}
       wavRecorderRef={wavRecorderRef}
       wavStreamPlayerRef={wavStreamPlayerRef}
-      disconnectConversation={disconnectConversation}
       isConnected={isConnected}
       setIsConnected={setIsConnected}
       items={items}
@@ -345,15 +369,7 @@ ${assistantMessage}
       isPreparing={isPreparing}
       setIsPreparing={setIsPreparing}
       />
-      {isHistoryVisible && (
-        <ConversationHistory
-          conversationHistory={conversationHistory}
-          conversationTitles={conversationTitles}
-          onClose={toggleHistory}
-        />
-      )}
     </>
-    </ErrorBoundary>
   );
 }
 

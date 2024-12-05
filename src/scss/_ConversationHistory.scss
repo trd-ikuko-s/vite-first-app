@@ -1,0 +1,64 @@
+@import 'color';
+
+.conversation-history {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; /* 必要に応じて調整 */
+  height: 100%;
+  background-color: $base-color;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 100;
+
+  &.visible {
+    transform: translateX(0);
+  }
+
+  &-header {
+    height: 56px;
+    margin: 0;
+
+    button {
+      padding: 8px;
+      background-color: rgba(255, 255, 255, 0);
+      margin-left: 4px;
+
+      img {
+        width: 40px;
+      }
+    }
+  }
+
+  &-title-list {
+    height: calc(100% - 76px - 40px);
+    margin: 20px 0 0;
+    padding: 0 16px;
+    list-style: none;
+    overflow-y: auto;
+    
+    li {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid white;
+      height: 50px;
+      
+      &:first-child {
+        border-top: 1px solid white;
+      }
+
+      img {
+        width: 32px;
+      }
+
+      p {
+        flex: 1;
+        padding-left: 12px;
+        margin: 0;
+        overflow:hidden;
+      }
+    }
+  }
+}
