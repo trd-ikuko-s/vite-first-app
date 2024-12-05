@@ -13,10 +13,6 @@ function Header({
   onSettingClick: () => void;
   onHistoryClick: () => void;
 }) {
-  const handleRecordButtonClick = useCallback(() => {
-    // 会話履歴ウインドウを表示
-    onHistoryClick();
-  }, [onHistoryClick]);
 
   // ページのリロード
   const reloadWindow = () => {
@@ -25,7 +21,7 @@ function Header({
 
   return (
     <Stack className='headerStack' direction='horizontal'>
-      <button className='icon-btn' onClick={handleRecordButtonClick}>
+      <button className='icon-btn' onClick={onHistoryClick}>
         <span>
           <img src={record} className="record" alt="Record Icon" />
         </span>

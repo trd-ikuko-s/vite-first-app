@@ -26,45 +26,47 @@
     -webkit-overflow-scrolling: touch;
     transition: .3s;
   }
-  
-  .chatStack {
-    display: flex;
-    align-items: start;
+}
 
-    &.user {
-      flex-direction: row-reverse;
-    }
-  }
-  
-  .chat-icon {
-    display: block;
-    width: 24px;
-    height: 24px;
-  }
+// 会話履歴詳細と共通
+.chatStack {
+  display: flex;
+  align-items: start !important;
 
-  .chat-name {
-    font-size: 12px;
-    line-height: 24px;
-    text-align: start;
-
-    &.user {
-      text-align: end;
-    }
-  }
-  
-  .chat-content {
-    // width: 315px;
-    font-size: 12px;
-    line-height: 20px;
-    padding-right: 32px;
-    word-break: break-all;
-    text-align: start;
-
-
-    &.user {
-      padding-right: 0;
-      padding-left: 32px;
-
-    }
+  &.user {
+    flex-direction: row-reverse;
   }
 }
+
+.chat-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.chat-name {
+  font-size: 12px;
+  line-height: 24px;
+  text-align: start;
+
+  &.user {
+    text-align: end;
+  }
+}
+
+.chat-content {
+  // width: 315px;
+  font-size: 12px;
+  line-height: 20px;
+  padding-right: 32px;
+  word-break: break-all;
+  text-align: start;
+
+
+  &.user {
+    padding-right: 0;
+    padding-left: 32px;
+
+  }
+}
+

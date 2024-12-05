@@ -19,28 +19,22 @@ function Chatpage({
   clientRef,
   wavRecorderRef,
   wavStreamPlayerRef,
-  disconnectConversation,
   isConnected,
   setIsConnected,
   items,
   setItems,
   isPreparing,
   setIsPreparing,
-  conversationHistory,
-  setConversationHistory
 }: {
   clientRef: React.RefObject<RealtimeClient>;
   wavRecorderRef: React.RefObject<WavRecorder>;
   wavStreamPlayerRef: React.RefObject<WavStreamPlayer>;
-  disconnectConversation: () => Promise<void>;
   isConnected: boolean;
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   items: ItemType[];
   setItems: React.Dispatch<React.SetStateAction<ItemType[]>>;
   isPreparing: boolean;
   setIsPreparing: React.Dispatch<React.SetStateAction<boolean>>;
-  conversationHistory: ItemType[][]; 
-  setConversationHistory: React.Dispatch<React.SetStateAction<ItemType[][]>>;
 }) {
   
   // マウント回数をチェック
