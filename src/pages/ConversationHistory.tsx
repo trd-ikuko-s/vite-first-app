@@ -1,44 +1,30 @@
-// ConversationHistory.tsx
-
 import React from 'react';
-import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
+import logo from '../assets/logo.svg';
+
 
 function ConversationHistory({
-  conversationHistory,
+  className,
   conversationTitles,
   onClose,
-}: {
-  conversationHistory: {
-    id: string;
-    role: string;
-    text: string;
-    timestamp: string;
-  }[][];
-  conversationTitles: string[];
-  onClose: () => void;
+  onTitleClick,
 }) {
   return (
-    <div className="conversation-history">
-      <h2>会話履歴</h2>
-      <button onClick={onClose}>閉じる</button>
-      {conversationHistory.filter((session) => session.length > 0).length === 0 ? (
-        <p>まだ会話履歴がありません。</p>
-      ) : (
-        conversationHistory.map((conversation, index) =>
-          conversation.length > 0 ? (
-            <div key={index} className="conversation">
-              <h3>{conversationTitles[index] || `会話 ${index + 1}`}</h3>
-              <ul>
-                {conversation.map((item, idx) => (
-                  <li key={idx}>
-                    <strong>{item.role === 'user' ? 'ユーザー' : 'AI'}</strong>: {item.text}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null
-        )
-      )}
+    <div className={`conversation-history ${className}`}>
+      <h2 className='conversation-history-header'>
+        <button onClick={onClose}>
+          <img src={logo} alt="Logo Icon" />
+        </button>
+      </h2>
+      <ul className="conversation-history-title-list">
+        {conversationTitles.map((title, index) => (
+          <li key={index} onClick={() => onTitleClick(index)}>
+            <img src={logo} alt="Logo Icon" />
+            <p>
+              {title || `タイトル生成中...`}
+            </p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
