@@ -16,6 +16,9 @@ function ConversationDetail({
   className,
   conversation,
   onClose,
+  isInputAreaVisible,
+  toggleInputarea,
+  userText,
 }: {
   className: string;
   conversation: {
@@ -25,6 +28,9 @@ function ConversationDetail({
     timestamp: string;
   }[];
   onClose: () => void;
+  isInputAreaVisible: boolean;
+  toggleInputarea:  () => void;
+  userText: string;
 }) {
 
   // 会話履歴の内容を表示
@@ -57,6 +63,7 @@ function ConversationDetail({
     );
   })
 
+
   return (
     <div className={`conversation-detail ${className}`}>
       <h2 className='conversation-detail-header'>
@@ -84,7 +91,7 @@ function ConversationDetail({
             </span>
           </button>
           <button className='icon-btn keyboard'
-          // onClick={showInputArea}
+          onClick={toggleInputarea}
           >
             <span>
               <img src={keyboard} className="keyboard"></img>

@@ -21,6 +21,10 @@ function App() {
 
   const isFirstRender = useRef(true);
 
+  // テキストエリア
+  const [isInputAreaVisible, setIsInputAreaVisible] = useState(false);
+  const [userText, setUserText] = useState('');
+
   // 会話履歴を管理する状態変数
   const [conversationHistory, setConversationHistory] = useState(() => {
     const storedHistory = localStorage.getItem('conversation-history');
@@ -76,6 +80,12 @@ function App() {
   // セッティング画面の表示
   const toggleSetting = () => {
     setIsSettingVisible((prev) => !prev);
+  };
+
+
+  // セッティング画面の表示
+  const toggleInputarea = () => {
+    setIsInputAreaVisible((prev) => !prev);
   };
 
   // APIとの接続関連
@@ -374,6 +384,9 @@ ${assistantMessage}
           setIsDetailVisible(false);
           setIsHistoryVisible(true); // conversation-history を再表示する
         }}
+        isInputAreaVisible={isInputAreaVisible}
+        toggleInputArea={toggleInputarea}
+        userText={userText}
       />
       <Setting
         isVisible={isSettingVisible}
