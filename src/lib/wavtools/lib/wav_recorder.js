@@ -318,7 +318,7 @@ export class WavRecorder {
       }
       this.stream = await navigator.mediaDevices.getUserMedia(config);
     } catch (err) {
-      throw new Error('Could not start media stream');
+      throw new Error(`Could not start media stream: ${err.message}`);
     }
 
     const context = new AudioContext({ sampleRate: this.sampleRate });

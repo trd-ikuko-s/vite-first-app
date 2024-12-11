@@ -36,11 +36,7 @@ function App() {
   
   // 現在のセッションインデックス
   const [currentSessionIndex, setCurrentSessionIndex] = useState(() => {
-    if (conversationHistory.length > 0) {
-      return conversationHistory.length - 1;
-    } else {
-      return 0;
-    }
+    return conversationHistory.length; // conversationHistory.length に設定
   });
 
   // タイトルを保存するための状態変数を追加
@@ -56,7 +52,11 @@ function App() {
   });
 
   // タイトルの生成フラグ
-  const [isTitleGenerated, setIsTitleGenerated] = useState<boolean[]>([]);
+  const [isTitleGenerated, setIsTitleGenerated] = useState<boolean[]>(() => {
+    // conversationHistory の長さに合わせて初期化
+    return new Array(conversationHistory.length).fill(true);
+  });
+  
 
   // 選択された会話のインデックスを保持
   const [selectedConversationIndex, setSelectedConversationIndex] = useState<number | null>(null);
@@ -116,23 +116,29 @@ function App() {
       return; // 初回レンダリング時は保存しない
     }
   
+    // 空のセッションを除外
+    const filteredHistory = conversationHistory.filter(
+      (session) => session && session.length > 0
+    );
+  
     // 会話履歴を localStorage に保存
-    const serializedHistory = conversationHistory.map((session) =>
+    const serializedHistory = filteredHistory.map((session) =>
       session.map((item) => ({
         id: item.id,
         role: item.role,
         text: item.text,
         timestamp: item.timestamp,
+        inputMethod: item.inputMethod,
       }))
     );
   
     try {
       localStorage.setItem('conversation-history', JSON.stringify(serializedHistory));
-      console.log('Saving conversationHistory:', conversationHistory);
+      console.log('Saving conversationHistory:', filteredHistory);
     } catch (error) {
       console.error('Failed to save conversation history to localStorage:', error);
     }
-  }, [conversationHistory]);
+  }, [conversationHistory]);  
   
   // conversationTitles が更新されたらローカルストレージに保存
   useEffect(() => {
@@ -179,23 +185,24 @@ function App() {
     }
     // 会話履歴の更新処理
     setConversationHistory((prevHistory) => {
-      // items が空の場合は何もしない
-      if (items.length === 0) {
-        return prevHistory;
-      }
-
       const newHistory = [...prevHistory];
-
-      // items から不要なデータを除外
+  
+      // items から不要なデータを除外し、inputMethod を追加
       const sanitizedItems = items.map((item) => ({
         id: item.id,
         role: item.role || '',
-        text: item.formatted?.transcript || item.formatted?.text ||'',
+        text: item.formatted?.transcript || item.formatted?.text || '',
         timestamp: new Date().toISOString(),
+        inputMethod:
+          item.role === 'user'
+            ? item.formatted?.transcript
+              ? 'voice'
+              : 'text'
+            : null,
       }));
-
+  
       newHistory[currentSessionIndex] = sanitizedItems;
-
+  
       return newHistory;
     });
   }, [items]);
@@ -219,12 +226,12 @@ function App() {
 
       const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
   
-      const prompt = `以下のユーザーとAIの会話内容をもとに、短くてわかりやすい会話のタイトルを考えてください。タイトルに'AI'という単語は含まず、20字以内で。タイトルのみを出力してください。
+      const prompt = `以下の自分と相手の会話内容をもとに、AIという単語は含まない20字以内の会話のタイトルを考えて。タイトルのみを出力。
   
-ユーザーの発言:
+自分の発言:
 ${userMessage}
 
-AIの返答:
+相手の返答:
 ${assistantMessage}
 
 タイトル:`;
@@ -309,20 +316,35 @@ ${assistantMessage}
     // 現在のセッションを終了
     await disconnectConversation();
   
-    // items をクリアする前に currentSessionIndex を更新
-    setCurrentSessionIndex((prevIndex) => {
-      const newIndex = prevIndex + 1;
-      // 会話履歴に新しい空のセッションを追加
-      setConversationHistory((prevHistory) => [...prevHistory, []]);
-      return newIndex;
-    });
+    // `items` が空でなければ、現在のセッションに会話が存在するため新しいセッションを追加
+    if (items.length > 0) {
+      setCurrentSessionIndex((prevIndex) => {
+        const newIndex = prevIndex + 1;
+  
+        // 会話履歴に新しいセッションを追加
+        setConversationHistory((prevHistory) => [...prevHistory, []]);
+  
+        // タイトルとフラグを更新
+        setConversationTitles((prevTitles) => [...prevTitles, '']);
+        setIsTitleGenerated((prevFlags) => [...prevFlags, false]);
+  
+        return newIndex;
+      });
+    } else {
+      // 会話が行われていない場合、空の配列を作らない
+      console.log('No conversation occurred, not adding empty arrays or incrementing session index.');
+      // この場合、currentSessionIndexは変更せず、そのまま新しいセッションを開始しても、
+      // 会話が行われていなかったセッションは生成されません。
+      // （もし明示的に何かしらの初期化をしたい場合は、ここで検討する）
+    }
   
     // items をクリア
     setItems([]);
   
     // 新しいセッションを開始
     await startConversation();
-  }, [disconnectConversation, startConversation]);  
+  }, [disconnectConversation, startConversation, items]);
+  
 
   return (
     <>
@@ -333,6 +355,7 @@ ${assistantMessage}
       <ConversationHistory
         className={isHistoryVisible ? 'visible' : ''}
         conversationTitles={conversationTitles}
+        conversationHistory={conversationHistory} 
         onClose={() => setIsHistoryVisible(false)}
         onTitleClick={(index) => {
           setSelectedConversationIndex(index);
