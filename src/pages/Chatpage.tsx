@@ -7,6 +7,7 @@ import { WavRecorder, WavStreamPlayer } from '../lib/wavtools/index.js';
 // import { WavRenderer } from '../utils/wav_renderer';
 
 import {instructions} from '../utils/conversation_config';
+import add from '../assets/add-simple.svg';
 import camera from '../assets/camera.svg';
 import sound from '../assets/sound.svg';
 import keyboard from '../assets/keyboard.svg';
@@ -263,12 +264,7 @@ function Chatpage({
     </div>
     {/* コントロールボタンエリア */}
     <div className='controlArea'>
-      <Stack className='ControlStack' direction='horizontal'>
-        <button className='icon-btn camera'>
-          <span>
-            <img src={camera} className="camera"></img>
-          </span>
-        </button>
+      <div className='soundbtn-container'>
         <div className='soundbtn-area'>
           <button className='icon-btn sound'
             onMouseDown={handleMouseDown}
@@ -288,11 +284,25 @@ function Chatpage({
             </span>
           </button>
         </div>
+      </div>
+      <Stack className='ControlStack' direction='horizontal'>
+        <button className='icon-btn new'
+        onClick={showInputArea}
+        >
+          <span>
+            <img src={add} className="keyboard"></img>
+          </span>
+        </button>
         <button className='icon-btn keyboard'
         onClick={showInputArea}
         >
           <span>
             <img src={keyboard} className="keyboard"></img>
+          </span>
+        </button>
+        <button className='icon-btn camera'>
+          <span>
+            <img src={camera} className="camera"></img>
           </span>
         </button>
       </Stack>
