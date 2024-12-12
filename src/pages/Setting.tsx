@@ -129,14 +129,10 @@ function Setting({
     }
   }, []);
 
-  //settingContents の変更をローカルストレージに保存
-  useEffect(() => {
-    localStorage.setItem('setting-contents', JSON.stringify(settingContents));
-  }, [settingContents]);
 
   // settingContentsが更新されたらローカルストレージに保存
   useEffect(() => {
-    localStorage.setItem('settingContents', JSON.stringify(settingContents));
+    localStorage.setItem('setting-contents', JSON.stringify(settingContents));
   }, [settingContents]);
 
   // ユーザーが入力した内容を settingContents に追加し、ローカルストレージに保存

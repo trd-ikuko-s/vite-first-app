@@ -287,7 +287,7 @@ function Chatpage({
       </div>
       <Stack className='ControlStack' direction='horizontal'>
         <button className='icon-btn new'
-        onClick={showInputArea}
+        // onClick={showInputArea} 新しいセッション開始
         >
           <span>
             <img src={add} className="keyboard"></img>

@@ -385,7 +385,7 @@ ${assistantMessage}
           setIsHistoryVisible(true); // conversation-history を再表示する
         }}
         isInputAreaVisible={isInputAreaVisible}
-        toggleInputArea={toggleInputarea}
+        toggleInputarea={toggleInputarea}
         userText={userText}
       />
       <Setting
