@@ -135,6 +135,7 @@ function Setting({
     localStorage.setItem('setting-contents', JSON.stringify(settingContents));
   }, [settingContents]);
 
+
   // ユーザーが入力した内容を settingContents に追加し、ローカルストレージに保存
   // 新しい設定を追加する関数
   const handleAddSetting = () => {
