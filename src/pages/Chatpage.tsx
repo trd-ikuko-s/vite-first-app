@@ -26,6 +26,7 @@ function Chatpage({
   setItems,
   isPreparing,
   setIsPreparing,
+  startNewSession,
 }: {
   clientRef: React.RefObject<RealtimeClient>;
   wavRecorderRef: React.RefObject<WavRecorder>;
@@ -36,6 +37,7 @@ function Chatpage({
   setItems: React.Dispatch<React.SetStateAction<ItemType[]>>;
   isPreparing: boolean;
   setIsPreparing: React.Dispatch<React.SetStateAction<boolean>>;
+  startNewSession: () => void;
 }) {
   
   // マウント回数をチェック
@@ -171,9 +173,6 @@ function Chatpage({
         item.formatted.file = wavFile;
       }
       setItems(items);
-      items.forEach(item => {
-        console.log(`itemsの中身：${item.formatted?.text || 'null'}`);
-      });
     });
 
     setItems(client.conversation.getItems());
@@ -290,7 +289,7 @@ function Chatpage({
       </div>
       <Stack className='ControlStack' direction='horizontal'>
         <button className='icon-btn new'
-        // onClick={showInputArea} 新しいセッション開始
+        onClick={startNewSession} //新しいセッション開始
         >
           <span>
             <img src={add} className="keyboard"></img>

@@ -335,7 +335,13 @@ ${assistantMessage}
         setConversationHistory((prevHistory) => [...prevHistory, []]);
   
         // タイトルとフラグを更新
-        setConversationTitles((prevTitles) => [...prevTitles, '']);
+        setConversationTitles((prevTitles) => {
+          // 既に空のタイトルが追加されていないか確認
+          if (prevTitles[prevTitles.length - 1] === '') {
+            return prevTitles;
+          }
+          return [...prevTitles, ''];
+        });
         setIsTitleGenerated((prevFlags) => [...prevFlags, false]);
   
         return newIndex;
@@ -403,6 +409,7 @@ ${assistantMessage}
       setItems={setItems}
       isPreparing={isPreparing}
       setIsPreparing={setIsPreparing}
+      startNewSession={startNewSession}
       />
     </>
   );
