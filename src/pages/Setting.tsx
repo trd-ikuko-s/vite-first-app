@@ -43,11 +43,13 @@ Personality:
 
 // コンポーネントの定義
 function Setting({
+  setTtsVoice,
   isVisible,
   onClose,
   clientRef,
   startNewSession,
 }: {
+  setTtsVoice: React.Dispatch<React.SetStateAction<string>>;
   isVisible: boolean;
   onClose: () => void;
   clientRef: React.RefObject<RealtimeClient>;
@@ -288,6 +290,16 @@ function Setting({
         client.updateSession({ instructions: editInstructions });
       }
 
+      const ttsVoice = 
+      editVoice == 'ash' ? 'fable' : 
+      editVoice == 'ballad' ? 'Onyx' : 
+      editVoice == 'coral' ? 'alloy' : 
+      editVoice == 'sage' ? 'nova' : 
+      editVoice == 'verse' ? 'nova' : 
+      editVoice;
+
+      setTtsVoice(ttsVoice);
+      console.log('TTS Voice:', ttsVoice);
       // ウインドウを閉じる
       setIsDetailWindowVisible(false);
       onClose();

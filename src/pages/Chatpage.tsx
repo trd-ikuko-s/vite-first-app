@@ -3,8 +3,7 @@ import { useEffect, useRef, useState, useCallback,ReactNode } from 'react';
 import { RealtimeClient } from '@openai/realtime-api-beta';
 import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
 import { WavRecorder, WavStreamPlayer } from '../lib/wavtools/index.js';
-// import { instructions } from '../utils/conversation_config.js';
-// import { WavRenderer } from '../utils/wav_renderer';
+import { textToSpeech } from '../feature/textToSpeech';
 
 import {instructions} from '../utils/conversation_config';
 import add from '../assets/add-simple.svg';
@@ -17,6 +16,8 @@ import assistantIcon from '../assets/assistant-icon.png';
 
 
 function Chatpage({
+  apiKey,
+  ttsVoice,
   clientRef,
   wavRecorderRef,
   wavStreamPlayerRef,
@@ -28,6 +29,8 @@ function Chatpage({
   setIsPreparing,
   startNewSession,
 }: {
+  apiKey: string;
+  ttsVoice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
   clientRef: React.RefObject<RealtimeClient>;
   wavRecorderRef: React.RefObject<WavRecorder>;
   wavStreamPlayerRef: React.RefObject<WavStreamPlayer>;
@@ -49,6 +52,10 @@ function Chatpage({
   }, []);
 
   // 必要な変数一覧
+
+  // GPT-4 Vが返した画像説明用の状態変数
+  // とりあえず初期値は「音声読み上げに成功しました。」でテスト
+  const [imageDescription, setImageDescription] = useState('音声読み上げに成功しました。');
 
   // テキスト送信関連
   const [isInputAreaVisible, setIsInputAreaVisible] = useState(false);
@@ -127,7 +134,24 @@ function Chatpage({
     e.currentTarget.classList.remove('is-recording');
   };
 
-  // // 会話ログのオートスクロール
+  // TTSの音声データを再生
+  async function handleReadAloud() {
+    try {
+      // textToSpeech関数で音声データ（Blob）を取得
+      const audioBlob = await textToSpeech(imageDescription, apiKey, ttsVoice);
+      const audioURL = URL.createObjectURL(audioBlob);
+
+      // audioを作成して再生
+      const audio = new Audio(audioURL);
+      audio.play().catch(err => {
+        console.error('音声再生エラー:', err);
+      });
+    } catch (error) {
+      console.error('TTSエラー:', error);
+    }
+  }
+
+  // 会話ログのオートスクロール
   useEffect(() => {
     const conversationEls = [].slice.call(
       document.body.querySelectorAll('[data-conversation-content]')
@@ -302,7 +326,7 @@ function Chatpage({
             <img src={keyboard} className="keyboard"></img>
           </span>
         </button>
-        <button className='icon-btn camera'>
+        <button className='icon-btn camera' onClick={handleReadAloud}>
           <span>
             <img src={camera} className="camera"></img>
           </span>

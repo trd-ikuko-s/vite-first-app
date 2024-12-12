@@ -12,6 +12,8 @@ import ConversationHistory from './pages/ConversationHistory';
 import ConversationDetail from './pages/ConversationDetail';
 
 function App() {
+  // TTS読み上げボイスの状態変数
+  const [ttsVoice, setTtsVoice] = useState<'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'>('fable')
 
   // Setting画面の状態変数
   const [isSettingVisible, setIsSettingVisible] = useState(false);
@@ -394,12 +396,15 @@ ${assistantMessage}
         userText={userText}
       />
       <Setting
+        setTtsVoice={setTtsVoice}
         isVisible={isSettingVisible}
         onClose={toggleSetting}
         clientRef={clientRef}
         startNewSession={startNewSession}
       />
       <Chatpage
+      apiKey={apiKey}
+      ttsVoice={ttsVoice}
       clientRef={clientRef}
       wavRecorderRef={wavRecorderRef}
       wavStreamPlayerRef={wavStreamPlayerRef}
