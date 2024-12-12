@@ -1,5 +1,3 @@
-// textToSpeech.ts
-
 import OpenAI from "openai";
 
 /**

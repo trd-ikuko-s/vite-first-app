@@ -36,6 +36,13 @@
       height: 32px;
     }
   }
+
+  label {
+    .input-camera {
+      display: none;
+    }
+  }
+
   .soundbtn-container {
     position:relative;
     display: flex;

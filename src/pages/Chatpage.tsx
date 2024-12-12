@@ -4,6 +4,8 @@ import { RealtimeClient } from '@openai/realtime-api-beta';
 import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
 import { WavRecorder, WavStreamPlayer } from '../lib/wavtools/index.js';
 import { textToSpeech } from '../feature/textToSpeech';
+import { recognizeImageWithGPT4V } from '../feature/gpt4Vision';
+import { fileToBase64 } from '../feature/fileToBase64';
 
 import {instructions} from '../utils/conversation_config';
 import add from '../assets/add-simple.svg';
@@ -55,7 +57,35 @@ function Chatpage({
 
   // GPT-4 Vが返した画像説明用の状態変数
   // とりあえず初期値は「音声読み上げに成功しました。」でテスト
-  const [imageDescription, setImageDescription] = useState('音声読み上げに成功しました。');
+  const [imageDescription, setImageDescription] = useState<string>('');
+  const prevDescRef = useRef('');
+
+  // カメラ起動用のinput参照
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 間接的にinputをクリックしてカメラを起動
+  const handleCameraClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click(); // inputをクリックしてカメラを起動
+    }
+  };
+
+  // 選択された画像をAPIに送信して解析
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      // 選んだ画像をBase64化
+      const base64DataUrl = await fileToBase64(file);
+      // Base64を用いてGPT-4 Vに画像解析
+      const description = await recognizeImageWithGPT4V(base64DataUrl, apiKey);
+      setImageDescription(description);
+
+    } catch (error) {
+      console.error('画像解析やTTS中にエラー:', error);
+    }
+  };
 
   // テキスト送信関連
   const [isInputAreaVisible, setIsInputAreaVisible] = useState(false);
@@ -150,6 +180,31 @@ function Chatpage({
       console.error('TTSエラー:', error);
     }
   }
+
+  // 画像認識処理
+  async function handleImageRecognition() {
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
+  
+    try {
+      const description :string = await recognizeImageWithGPT4V(imageUrl, apiKey);
+      console.log("画像の説明:", description);
+      // このdescriptionをsetImageDescription(description)で状態更新して、
+      // TTSで読み上げたりitemsに追加したりできる
+      setImageDescription(description);
+    } catch (error) {
+      console.error("画像認識に失敗しました:", error);
+    }
+  }
+
+  // 画像認識処理後に、テキストをTTSで読み上げる
+  useEffect(() => {
+    if (imageDescription && imageDescription !== prevDescRef.current) {
+      handleReadAloud();
+      console.log('TTS読み上げ:', imageDescription);
+    }
+    prevDescRef.current = imageDescription;
+  }, [imageDescription]);
 
   // 会話ログのオートスクロール
   useEffect(() => {
@@ -326,12 +381,22 @@ function Chatpage({
             <img src={keyboard} className="keyboard"></img>
           </span>
         </button>
-        <button className='icon-btn camera' onClick={handleReadAloud}>
+        <button className='icon-btn camera' onClick={handleCameraClick}>
           <span>
-            <img src={camera} className="camera"></img>
+            <img src={camera} className="camera" alt="Camera Icon"></img>
           </span>
         </button>
       </Stack>
+        <label>
+          {/* 隠す */}
+          <input
+            type="file"
+            accept="image/*;capture=camera"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+        </label>
     </div>
     
 
