@@ -355,7 +355,6 @@ ${assistantMessage}
     await startConversation();
   }, [disconnectConversation, startConversation, items]);
   
-
   return (
     <>
       <Header

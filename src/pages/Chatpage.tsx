@@ -171,6 +171,9 @@ function Chatpage({
         item.formatted.file = wavFile;
       }
       setItems(items);
+      items.forEach(item => {
+        console.log(`itemsの中身：${item.formatted?.text || 'null'}`);
+      });
     });
 
     setItems(client.conversation.getItems());
@@ -257,7 +260,7 @@ function Chatpage({
       <div className='chat-status-msg'>
         {items.length ?  ``: isPreparing ? `接続準備中...` : isConnected ? `質問してください` : `接続されていません`}
       </div>
-      <Stack className='chatContainerStack' data-conversation-content gap={4}>
+      <Stack className='chatContainerStack' data-conversation-content>
         {/* 会話やりとり表示エリア */}
         {currentConversationHistory}
       </Stack>

@@ -17,7 +17,7 @@
   .chatContainerStack {
     position: relative;
     // width: 100%;
-    height: calc(100vh - 105px - 164px);
+    height: calc(100vh - 56px - 164px);
     padding: 8px;
     background-color: $--bs-body-bg;
     border-radius: 12px;
@@ -32,6 +32,7 @@
 .chatStack {
   display: flex;
   align-items: start !important;
+  margin-bottom: 30px;
 
   &.user {
     flex-direction: row-reverse;

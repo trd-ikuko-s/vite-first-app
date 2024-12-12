@@ -4,11 +4,16 @@
 
     .icon-btn {
         display: block;
-        padding: 8px;
+        padding: 5px;
+        margin: 0 3px;
         background-color: rgba($color: #fff, $alpha: 0);
 
+        &:nth-child(2) {
+            padding: 5px 3px;
+        }
+
         &.logo {
-            margin-top: 8px;
+            margin: 0px;
         }
         
         .record,.setting{
@@ -16,7 +21,7 @@
         }
         
         .logo {
-            width: 80px;
+            width: 44px;
         }
     }
 }
